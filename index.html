@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSwallower</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: purple;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(128, 0, 128, 0.5);
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #8a2be2;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>¡Bienvenido a WebSwallower!</h1>
+        <p>Haz clic en el botón para activar el agujero negro en tu navegador.</p>
+        <button id="activateButton">Activar WebSwallower</button>
+    </div>
+
+    <script>
+        document.getElementById('activateButton').addEventListener('click', function() {
+            const script = document.createElement('script');
+            script.innerHTML = `
+                (function(){
+                    const b = document.createElement('div');
+                    b.id = 'WebSwallower';
+                    b.style.position = 'fixed';
+                    b.style.width = '50px';
+                    b.style.height = '50px';
+                    b.style.borderRadius = '50%';
+                    b.style.background = 'radial-gradient(circle, purple 10%, black 70%)';
+                    b.style.pointerEvents = 'none';
+                    b.style.zIndex = '9999';
+                    b.style.boxShadow = '0 0 20px 10px rgba(128, 0, 128, 0.5)';
+                    document.body.appendChild(b);
+                    document.addEventListener('mousemove', e => {
+                        b.style.left = e.clientX - 25 + 'px';
+                        b.style.top = e.clientY - 25 + 'px';
+                        document.querySelectorAll('img, p, a, div').forEach(el => {
+                            if (el.id === 'WebSwallower') return;
+                            let r = el.getBoundingClientRect();
+                            let dx = e.clientX - (r.left + r.width / 2);
+                            let dy = e.clientY - (r.top + r.height / 2);
+                            let d = Math.sqrt(dx * dx + dy * dy);
+                            let s = Math.max(0.7, 1 - d / 300);
+                            if (d < 150) {
+                                el.style.transition = 'transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease';
+                                el.style.transform = \`translate(\${dx * 0.1}px,\${dy * 0.1}px) scale(\${s})\`;
+                                el.style.filter = \`blur(\${(150 - d) / 50}px) saturate(\${1 - d / 300})\`;
+                                if (d < 50) {
+                                    el.style.transform = \`scale(0.5) rotate(\${Math.random() * 20 - 10}deg)\`;
+                                    setTimeout(() => {
+                                        el.style.transform = 'scale(0.2) rotate(720deg)';
+                                        el.style.opacity = '0';
+                                        el.style.filter = 'blur(10px)';
+                                        setTimeout(() => el.remove(), 500);
+                                    }, 300);
+                                }
+                            }
+                        });
+                    });
+                })();
+            `;
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>
